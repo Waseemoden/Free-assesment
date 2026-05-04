@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -439,7 +440,7 @@
 </div>
 
 <script>
-const SHEET_URL = 'https://script.google.com/macros/s/AKfycbyHEZIRM_PxXqqeAnRB32MgBz_G9OqRwjrqFofXaqa4PC6RPoFRypQz_7SH1_7lQ-tatg/exec';
+const SHEET_URL = 'https://script.google.com/macros/s/AKfycbyAKkg2UUkJlV_rbxkP-2PdlLxbmCqzzXA8VD44y7i1MzPrKs4LvwwUw5VSg0DmO_0How/exec';
 
 const ans = {};
 let physSkipped = false;
@@ -491,6 +492,10 @@ const m5Suggestions = {
   over_exercise: { icon:'⚖️', label:'After a Bad Meal',         text:'<b>Food is not debt</b> — exercise to get stronger, never to pay for eating. That cycle leads to burnout fast.' },
   continue:      { icon:'🧘', label:'After a Bad Meal',         text:'<b>Solid foundation</b> — make the good meals consistent enough that off days barely register.' }
 };
+
+const p1Labels = { 1:'0–1.5 mins', 2:'1.5–5 mins', 3:'5+ mins' };
+const p2Labels = { 1:"Can't reach knees", 2:'Touch shins/ankles', 3:'Palms flat' };
+const p3Labels = { 1:'0–10 sec', 2:'10–60 sec', 3:'60+ sec' };
 
 function go(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
@@ -645,14 +650,22 @@ function buildResults(name) {
 function logToSheet(name, contact) {
   const { cScore, dScore, rScore } = calcScores();
   const hasPhysical = !physSkipped && ['p1','p2','p3'].every(k => ans[k]);
-  let physLabel = 'Skipped';
+
+  let plankVal = 'Skipped';
+  let flexVal = 'Skipped';
+  let balVal = 'Skipped';
+  let physLevel = 'Skipped';
+
   if (hasPhysical) {
+    plankVal = p1Labels[ans['p1']];
+    flexVal  = p2Labels[ans['p2']];
+    balVal   = p3Labels[ans['p3']];
     const total = ans['p1'] + ans['p2'] + ans['p3'];
     const pct = total / 9;
-    if (pct <= 0.33) physLabel = 'AMATEUR';
-    else if (pct <= 0.55) physLabel = 'BEGINNER';
-    else if (pct <= 0.77) physLabel = 'SEMI-PRO';
-    else physLabel = 'PRO';
+    if (pct <= 0.33) physLevel = 'AMATEUR';
+    else if (pct <= 0.55) physLevel = 'BEGINNER';
+    else if (pct <= 0.77) physLevel = 'SEMI-PRO';
+    else physLevel = 'PRO';
   }
 
   const now = new Date();
@@ -663,9 +676,14 @@ function logToSheet(name, contact) {
     name,
     contact,
     consistency: cScore + '/10 (' + m1Labels[ans.m1] + ')',
+    missed:      missedScore[ans.m2] + '/10 (' + m2Labels[ans.m2] + ')',
+    dietpattern: dietPatternScore[ans.m3] + '/10 (' + m3Labels[ans.m3] + ')',
     diet:        dScore + '/10 (' + m4Labels[ans.m4] + ')',
     recovery:    rScore + '/10 (' + m5Labels[ans.m5] + ')',
-    physical:    physLabel
+    plank:       plankVal,
+    flexibility: flexVal,
+    balance:     balVal,
+    physicallevel: physLevel
   };
 
   fetch(SHEET_URL, {
