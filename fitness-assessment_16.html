@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Waseem Method Assessment · trainwithoden</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #0d0e10; --surface: #16181c; --surface2: #1c1e23;
+    --border: rgba(255,255,255,0.07);
+    --amber: #f59e0b; --amber-dim: rgba(245,158,11,0.1);
+    --teal: #14b8a6; --teal-dim: rgba(20,184,166,0.1);
+    --text: #f0f0ee; --muted: #7a7a78; --danger: #ef4444;
+    --red: #ef4444; --green: #22c55e;
+  }
+  body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; overflow-x: hidden; }
+  .screen { display: none; min-height: 100vh; flex-direction: column; }
+  .screen.active { display: flex; }
+
+  /* ── INTRO ── */
+  #intro { align-items: center; justify-content: center; text-align: center; padding: 2.5rem 1.5rem; background: radial-gradient(ellipse at 50% 15%, rgba(20,184,166,0.07) 0%, transparent 60%); }
+  .brand-tag { font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--teal); margin-bottom: 0.5rem; opacity: 0.7; }
+  .logo-wrap { margin-bottom: 0.3rem; }
+  .logo-wrap img { height: 44px; filter: brightness(0) invert(1); opacity: 0.85; }
+  .intro-badge { display: inline-block; font-size: 10.5px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--teal); border: 1px solid rgba(20,184,166,0.25); padding: 4px 13px; border-radius: 100px; margin-bottom: 1.25rem; }
+  h1.hero { font-family: 'Bebas Neue', sans-serif; font-size: clamp(1.9rem, 6.5vw, 3.2rem); line-height: 1; letter-spacing: 0.02em; margin-bottom: 0.75rem; }
+  h1.hero span { color: var(--teal); }
+  .timer-line { display: inline-flex; align-items: center; gap: 6px; font-size: 11.5px; color: var(--muted); margin-bottom: 1.1rem; }
+  .timer-line b { color: var(--teal); }
+  .intro-desc { color: var(--muted); font-size: 0.92rem; line-height: 1.65; max-width: 380px; margin: 0 auto 1.1rem; }
+  .intro-note { display: inline-block; background: rgba(20,184,166,0.07); border: 1px solid rgba(20,184,166,0.15); border-radius: 9px; padding: 0.6rem 1.1rem; font-size: 0.84rem; color: var(--teal); margin-bottom: 1.75rem; line-height: 1.5; max-width: 360px; }
+  .intro-stats { display: flex; max-width: 340px; margin: 0 auto 2rem; background: var(--surface); border: 1px solid var(--border); border-radius: 11px; overflow: hidden; }
+  .stat-item { flex: 1; text-align: center; padding: 0.8rem 0.4rem; border-right: 1px solid var(--border); }
+  .stat-item:last-child { border-right: none; }
+  .stat-item .num { font-family: 'Bebas Neue', sans-serif; font-size: 1.6rem; display: block; line-height: 1; margin-bottom: 2px; }
+  .stat-item .lbl { font-size: 0.65rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.07em; }
+  .btn-start { display: inline-block; background: var(--teal); color: #000; font-family: 'DM Sans', sans-serif; font-weight: 700; font-size: 0.95rem; padding: 13px 32px; border-radius: 100px; border: none; cursor: pointer; transition: transform 0.15s, box-shadow 0.15s; }
+  .btn-start:hover { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(20,184,166,0.28); }
+  .intro-foot { font-size: 0.72rem; color: rgba(255,255,255,0.2); margin-top: 0.85rem; }
+
+  /* ── QUIZ ── */
+  #quiz { flex-direction: column; }
+  .quiz-header { position: sticky; top: 0; z-index: 10; background: rgba(13,14,16,0.96); backdrop-filter: blur(12px); padding: 0.85rem 1.5rem; border-bottom: 1px solid var(--border); }
+  .quiz-header-inner { max-width: 620px; margin: 0 auto; display: flex; align-items: center; gap: 1rem; }
+  .quiz-brand { font-family: 'Bebas Neue', sans-serif; font-size: 1rem; letter-spacing: 0.1em; color: var(--teal); white-space: nowrap; }
+  .progress-wrap { flex: 1; }
+  .progress-labels { display: flex; justify-content: space-between; font-size: 11px; color: var(--muted); margin-bottom: 4px; }
+  .progress-bar { height: 3px; background: rgba(255,255,255,0.05); border-radius: 2px; overflow: hidden; }
+  .progress-fill { height: 100%; background: var(--teal); border-radius: 2px; transition: width 0.4s ease; }
+  .quiz-body { flex: 1; max-width: 620px; width: 100%; margin: 0 auto; padding: 1.75rem 1.5rem 5rem; }
+
+  /* Section heads */
+  .sec-head { display: flex; align-items: center; gap: 11px; margin-bottom: 1.5rem; padding-bottom: 0.9rem; border-bottom: 1px solid var(--border); }
+  .sec-icon { width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+  .sec-icon.m { background: var(--teal-dim); }
+  .sec-icon.p { background: var(--amber-dim); }
+  .sec-title { font-family: 'Bebas Neue', sans-serif; font-size: 1.35rem; letter-spacing: 0.05em; }
+  .sec-title.t { color: var(--teal); }
+  .sec-title.a { color: var(--amber); }
+  .sec-sub { font-size: 0.8rem; color: var(--muted); margin-top: 1px; }
+
+  /* Optional banner */
+  .optional-banner { display: flex; align-items: center; gap: 10px; background: var(--amber-dim); border: 1px solid rgba(245,158,11,0.15); border-radius: 9px; padding: 0.7rem 1rem; margin-bottom: 1.4rem; }
+  .opt-text { font-size: 0.82rem; color: rgba(245,158,11,0.8); line-height: 1.4; flex: 1; }
+  .opt-skip { font-size: 0.78rem; color: var(--amber); background: none; border: 1px solid rgba(245,158,11,0.28); border-radius: 100px; padding: 4px 12px; cursor: pointer; font-family: 'DM Sans', sans-serif; white-space: nowrap; }
+  .opt-skip:hover { background: rgba(245,158,11,0.1); }
+
+  /* Divider */
+  .divider { display: flex; align-items: center; gap: 1rem; margin: 2.5rem 0 1.75rem; }
+  .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+  .divider-pill { background: var(--amber-dim); border: 1px solid rgba(245,158,11,0.15); color: rgba(245,158,11,0.75); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; padding: 4px 13px; border-radius: 100px; white-space: nowrap; }
+
+  /* Q cards */
+  .q-card { background: var(--surface); border: 1px solid var(--border); border-radius: 13px; padding: 1.3rem; margin-bottom: 1rem; }
+  .q-card.mc { border-color: rgba(20,184,166,0.12); background: rgba(20,184,166,0.02); }
+  .q-card.pc { border-color: rgba(245,158,11,0.09); }
+  .q-num { font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 0.4rem; }
+  .q-num.mn { color: rgba(20,184,166,0.5); }
+  .q-num.pn { color: rgba(245,158,11,0.4); }
+  .q-text { font-size: 0.97rem; font-weight: 500; line-height: 1.5; margin-bottom: 1rem; }
+  .opts { display: flex; flex-direction: column; gap: 6px; }
+  .opts.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+  .opt { background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; cursor: pointer; text-align: left; color: var(--text); font-family: 'DM Sans', sans-serif; transition: border-color 0.13s, background 0.13s; }
+  .opt:hover { border-color: rgba(20,184,166,0.4); background: rgba(20,184,166,0.04); }
+  .opt.sel { border-color: var(--teal); background: var(--teal-dim); }
+  .opt.popt { background: rgba(0,0,0,0.18); border-color: rgba(245,158,11,0.07); }
+  .opt.popt:hover { border-color: rgba(245,158,11,0.4); background: rgba(245,158,11,0.04); }
+  .opt.popt.sel { border-color: var(--amber); background: var(--amber-dim); }
+  .opt-lbl { font-size: 0.86rem; font-weight: 500; display: block; line-height: 1.4; }
+  .opt-sub { font-size: 0.71rem; color: var(--muted); display: block; margin-top: 2px; }
+
+  /* Own words */
+  .own-words-wrap { margin-top: 9px; }
+  .own-words-label { font-size: 10.5px; color: var(--muted); display: block; margin-bottom: 4px; letter-spacing: 0.04em; }
+  .own-words-input { width: 100%; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 9px 12px; color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 0.85rem; resize: none; outline: none; min-height: 64px; transition: border-color 0.15s; line-height: 1.5; }
+  .own-words-input:focus { border-color: rgba(20,184,166,0.45); }
+  .own-words-input::placeholder { color: rgba(255,255,255,0.18); }
+
+  /* Skipped */
+  #physical-skipped { display: none; background: var(--surface); border: 1px dashed rgba(245,158,11,0.18); border-radius: 13px; padding: 1.1rem; text-align: center; margin-bottom: 1rem; }
+  #physical-skipped p { font-size: 0.83rem; color: var(--muted); }
+  #physical-skipped button { margin-top: 0.4rem; font-size: 0.8rem; color: var(--amber); background: none; border: none; cursor: pointer; font-family: 'DM Sans', sans-serif; text-decoration: underline; }
+
+  /* Contact */
+  .contact-box { background: var(--surface); border: 1px solid var(--border); border-radius: 13px; padding: 1.3rem; margin-top: 1.75rem; }
+  .contact-box h3 { font-size: 0.97rem; font-weight: 600; margin-bottom: 0.2rem; }
+  .contact-box p { font-size: 0.81rem; color: var(--muted); margin-bottom: 1.1rem; }
+  .form-row { display: flex; gap: 9px; flex-wrap: wrap; margin-bottom: 9px; }
+  .f-field { flex: 1; min-width: 180px; }
+  .f-field label { font-size: 10.5px; color: var(--muted); display: block; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.06em; }
+  .f-field input { width: 100%; background: var(--surface2); border: 1px solid var(--border); border-radius: 7px; padding: 10px 12px; color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 0.9rem; outline: none; transition: border-color 0.15s; }
+  .f-field input:focus { border-color: var(--teal); }
+  .f-field input.err { border-color: var(--danger); }
+  .err-msg { font-size: 11px; color: var(--danger); margin-top: 3px; display: none; }
+  .err-msg.show { display: block; }
+  .submit-row { margin-top: 1.1rem; display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
+  .btn-submit { background: var(--teal); color: #000; font-family: 'DM Sans', sans-serif; font-weight: 700; font-size: 0.92rem; padding: 12px 30px; border-radius: 100px; border: none; cursor: pointer; transition: transform 0.15s; }
+  .btn-submit:hover { transform: translateY(-2px); }
+  .btn-submit:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+  .warn-msg { font-size: 11px; color: var(--danger); display: none; }
+  .warn-msg.show { display: block; }
+
+  /* ── RESULTS ── */
+  #results { flex-direction: column; align-items: center; }
+  .r-header { width: 100%; text-align: center; padding: 2rem 1.5rem 1.75rem; background: radial-gradient(ellipse at 50% 0%, rgba(20,184,166,0.08) 0%, transparent 50%); border-bottom: 1px solid var(--border); }
+  .r-brand { font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(20,184,166,0.5); margin-bottom: 0.3rem; }
+  .r-header img { height: 30px; filter: brightness(0) invert(1); opacity: 0.75; margin-bottom: 1.25rem; display: block; margin-left: auto; margin-right: auto; }
+  .r-greeting { font-size: 0.85rem; color: var(--muted); margin-bottom: 1.5rem; }
+  .r-greeting strong { color: var(--text); }
+
+  /* Graph bars */
+  .graph-wrap { max-width: 420px; margin: 0 auto 1.75rem; display: flex; flex-direction: column; gap: 14px; }
+  .graph-row { display: flex; align-items: center; gap: 12px; }
+  .graph-label { font-size: 0.8rem; font-weight: 500; color: var(--muted); width: 130px; text-align: right; flex-shrink: 0; }
+  .graph-bar-wrap { flex: 1; background: rgba(255,255,255,0.05); border-radius: 4px; height: 10px; overflow: hidden; }
+  .graph-bar { height: 100%; border-radius: 4px; transition: width 1s cubic-bezier(.4,0,.2,1); width: 0%; }
+  .bar-red { background: linear-gradient(90deg, #ef4444, #f87171); }
+  .bar-amber { background: linear-gradient(90deg, #f59e0b, #fbbf24); }
+  .bar-green { background: linear-gradient(90deg, #22c55e, #4ade80); }
+  .graph-score { font-family: 'Bebas Neue', sans-serif; font-size: 1rem; width: 44px; flex-shrink: 0; }
+  .score-red { color: #f87171; }
+  .score-amber { color: var(--amber); }
+  .score-green { color: #4ade80; }
+
+  /* Bridge text */
+  .bridge-text { max-width: 420px; margin: 0 auto 1.75rem; text-align: center; padding: 1rem 1.25rem; background: rgba(20,184,166,0.05); border: 1px solid rgba(20,184,166,0.12); border-radius: 10px; }
+  .bridge-text p { font-size: 0.88rem; color: var(--teal); line-height: 1.6; font-style: italic; }
+  .bridge-text p + p { margin-top: 0.3rem; }
+
+  .r-body { width: 100%; max-width: 620px; padding: 1.75rem 1.5rem 4rem; }
+  .r-sec-title { font-family: 'Bebas Neue', sans-serif; font-size: 1.2rem; letter-spacing: 0.08em; margin-bottom: 1rem; display: flex; align-items: center; gap: 8px; color: var(--muted); }
+  .r-sec-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+  /* Suggestion rows */
+  .suggestion-list { display: flex; flex-direction: column; gap: 9px; margin-bottom: 2rem; }
+  .suggestion-row { background: var(--surface); border: 1px solid var(--border); border-radius: 11px; padding: 1rem 1.1rem; display: flex; align-items: flex-start; gap: 10px; }
+  .s-icon { font-size: 1.2rem; flex-shrink: 0; margin-top: 1px; }
+  .s-content { flex: 1; }
+  .s-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); margin-bottom: 3px; }
+  .s-text { font-size: 0.88rem; line-height: 1.55; color: var(--text); }
+  .s-text b { color: var(--teal); font-weight: 600; }
+
+  /* Physical breakdown */
+  .cat-cards { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; margin-bottom: 2rem; }
+  .cat-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 0.85rem; text-align: center; }
+  .cat-icon { font-size: 17px; margin-bottom: 4px; }
+  .cat-name { font-size: 9.5px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); margin-bottom: 3px; }
+  .cat-score { font-family: 'Bebas Neue', sans-serif; font-size: 1.4rem; color: var(--amber); }
+  .cat-lv { font-size: 10.5px; color: var(--muted); }
+
+  /* CTA */
+  .cta-card { background: linear-gradient(135deg, rgba(20,184,166,0.08), rgba(245,158,11,0.04)); border: 1px solid rgba(20,184,166,0.16); border-radius: 13px; padding: 1.6rem; text-align: center; margin-bottom: 1.1rem; }
+  .cta-card h3 { font-family: 'Bebas Neue', sans-serif; font-size: 1.55rem; letter-spacing: 0.05em; margin-bottom: 0.3rem; }
+  .cta-card p { color: var(--muted); font-size: 0.84rem; margin-bottom: 1.25rem; line-height: 1.55; }
+  .cta-btns { display: flex; gap: 9px; justify-content: center; flex-wrap: wrap; }
+  .cta-a { display: inline-flex; align-items: center; gap: 6px; padding: 10px 20px; border-radius: 100px; font-size: 0.85rem; font-weight: 600; cursor: pointer; text-decoration: none; transition: transform 0.15s; }
+  .cta-a:hover { transform: translateY(-2px); }
+  .cta-wa { background: #25d366; color: #000; }
+  .cta-mail { background: var(--surface2); color: var(--text); border: 1px solid var(--border); }
+  .retake-btn { display: block; width: 100%; text-align: center; padding: 10px; border-radius: 100px; border: 1px solid var(--border); color: var(--muted); cursor: pointer; font-family: 'DM Sans', sans-serif; font-size: 0.85rem; background: transparent; transition: all 0.15s; }
+  .retake-btn:hover { border-color: rgba(255,255,255,0.15); color: var(--text); }
+  .footer { text-align: center; font-size: 11px; color: rgba(255,255,255,0.15); padding: 1.5rem; }
+
+  @media (max-width: 460px) {
+    .opts.grid2 { grid-template-columns: 1fr; }
+    .graph-label { width: 100px; font-size: 0.75rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ════ INTRO ════ -->
+<div id="intro" class="screen active">
+  <div class="brand-tag">trainwithoden</div>
+  <div class="logo-wrap">
+    <img src="https://fitness-checker-webpage.vercel.app/logo.png" alt="Lyfstyle Coach" onerror="this.style.display='none'">
+  </div>
+  <div class="intro-badge">Waseem Method · Free Assessment</div>
+  <h1 class="hero">THE REAL REASON<br>YOU'RE <span>NOT THERE YET</span></h1>
+  <div class="timer-line">⏱ <b>Under 2 min</b> · Let's find out what's stopping you</div>
+  <p class="intro-desc">Most assessments test your body. This one starts with the real problem — your habits and what's actually in the way.</p>
+  <div class="intro-note">We start with your struggles first — because that's where the real answer lives. The exercise part is optional.</div>
+  <div class="intro-stats">
+    <div class="stat-item"><span class="num" style="color:var(--teal)">5</span><span class="lbl">Habit questions</span></div>
+    <div class="stat-item"><span class="num" style="color:var(--amber)">3</span><span class="lbl">Physical (optional)</span></div>
+    <div class="stat-item"><span class="num" style="color:var(--text)">2m</span><span class="lbl">To complete</span></div>
+  </div>
+  <button class="btn-start" onclick="go('quiz');window.scrollTo(0,0)">Start the Waseem Method →</button>
+  <p class="intro-foot">trainwithoden · Train Life. Not Just Body.</p>
+</div>
+
+
+<!-- ════ QUIZ ════ -->
+<div id="quiz" class="screen">
+  <div class="quiz-header">
+    <div class="quiz-header-inner">
+      <div class="quiz-brand">WASEEM METHOD</div>
+      <div class="progress-wrap">
+        <div class="progress-labels">
+          <span id="prog-text">0 of 5 answered</span>
+          <span id="prog-pct">0%</span>
+        </div>
+        <div class="progress-bar"><div class="progress-fill" id="prog-fill" style="width:0%"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="quiz-body">
+    <div class="sec-head">
+      <div class="sec-icon m">🧠</div>
+      <div>
+        <div class="sec-title t">Your Real Blocker</div>
+        <div class="sec-sub">Be honest — this is between you and your results</div>
+      </div>
+    </div>
+
+    <!-- M1 -->
+    <div class="q-card mc" id="card-m1">
+      <div class="q-num mn">Question 01 · Consistency</div>
+      <div class="q-text">What most often stops you from staying consistent with workouts?</div>
+      <div class="opts">
+        <button class="opt" onclick="pick('m1','no_time',this)"><span class="opt-lbl">No time — life is too busy</span></button>
+        <button class="opt" onclick="pick('m1','low_energy',this)"><span class="opt-lbl">Low energy — I'm always tired</span></button>
+        <button class="opt" onclick="pick('m1','no_motivation',this)"><span class="opt-lbl">Lost motivation — no clear goal</span></button>
+        <button class="opt" onclick="pick('m1','life_stress',this)"><span class="opt-lbl">Life events or stress derail me</span></button>
+        <button class="opt" onclick="pick('m1','no_plan',this)"><span class="opt-lbl">No plan — I don't know what to do</span></button>
+      </div>
+      <div class="own-words-wrap">
+        <span class="own-words-label">Or describe it in your own words (optional)</span>
+        <textarea class="own-words-input" id="m1-custom" placeholder="e.g. I keep starting over every Monday…" oninput="ans['m1_custom']=this.value"></textarea>
+      </div>
+    </div>
+
+    <!-- M2 -->
+    <div class="q-card mc" id="card-m2">
+      <div class="q-num mn">Question 02 · Missed Sessions</div>
+      <div class="q-text">When you miss workouts — what do you actually do about it?</div>
+      <div class="opts">
+        <button class="opt" onclick="pick('m2','guilt_nothing',this)"><span class="opt-lbl">Felt guilty and did nothing</span></button>
+        <button class="opt" onclick="pick('m2','compensate',this)"><span class="opt-lbl">Tried to compensate with extra sessions</span></button>
+        <button class="opt" onclick="pick('m2','accepted',this)"><span class="opt-lbl">Accepted it and moved on</span></button>
+        <button class="opt" onclick="pick('m2','didnt_notice',this)"><span class="opt-lbl">Didn't even notice I was slipping</span></button>
+        <button class="opt" onclick="pick('m2','modified',this)"><span class="opt-lbl">Modified my plan to be more realistic</span></button>
+      </div>
+    </div>
+
+    <!-- M3 -->
+    <div class="q-card mc" id="card-m3">
+      <div class="q-num mn">Question 03 · Diet Honesty</div>
+      <div class="q-text">Be honest — how would you describe your current eating pattern?</div>
+      <div class="opts">
+        <button class="opt" onclick="pick('m3','eat_well',this)"><span class="opt-lbl">I eat well most of the time</span></button>
+        <button class="opt" onclick="pick('m3','weekday_ok',this)"><span class="opt-lbl">Okay on weekdays, off track on weekends</span></button>
+        <button class="opt" onclick="pick('m3','inconsistent',this)"><span class="opt-lbl">Inconsistent and random — no real pattern</span></button>
+        <button class="opt" onclick="pick('m3','know_but_dont',this)"><span class="opt-lbl">I know what to eat but I don't follow it</span></button>
+        <button class="opt" onclick="pick('m3','no_structure',this)"><span class="opt-lbl">No structure at all</span></button>
+      </div>
+    </div>
+
+    <!-- M4 -->
+    <div class="q-card mc" id="card-m4">
+      <div class="q-num mn">Question 04 · Diet Challenge</div>
+      <div class="q-text">What is your biggest diet challenge right now?</div>
+      <div class="opts">
+        <button class="opt" onclick="pick('m4','cravings',this)"><span class="opt-lbl">Cravings and emotional eating</span></button>
+        <button class="opt" onclick="pick('m4','social',this)"><span class="opt-lbl">Social eating — weddings, family, eating out</span></button>
+        <button class="opt" onclick="pick('m4','no_time_cook',this)"><span class="opt-lbl">No time to cook or prepare food</span></button>
+        <button class="opt" onclick="pick('m4','dont_know',this)"><span class="opt-lbl">I don't know what I should be eating</span></button>
+        <button class="opt" onclick="pick('m4','late_night',this)"><span class="opt-lbl">Late night eating I can't control</span></button>
+        <button class="opt" onclick="pick('m4','no_results',this)"><span class="opt-lbl">I eat well but see zero results</span></button>
+      </div>
+    </div>
+
+    <!-- M5 -->
+    <div class="q-card mc" id="card-m5">
+      <div class="q-num mn">Question 05 · After Eating Poorly</div>
+      <div class="q-text">When you eat poorly — what usually happens next?</div>
+      <div class="opts">
+        <button class="opt" onclick="pick('m5','bounce_back',this)"><span class="opt-lbl">I get back on track at the next meal</span></button>
+        <button class="opt" onclick="pick('m5','spiral',this)"><span class="opt-lbl">I spiral and keep eating poorly</span></button>
+        <button class="opt" onclick="pick('m5','shame',this)"><span class="opt-lbl">Shame and guilt make it worse</span></button>
+        <button class="opt" onclick="pick('m5','over_exercise',this)"><span class="opt-lbl">I over-exercise to compensate</span></button>
+        <button class="opt" onclick="pick('m5','continue',this)"><span class="opt-lbl">Nothing — I just continue normally</span></button>
+      </div>
+    </div>
+
+    <!-- Optional physical -->
+    <div class="divider"><div class="divider-pill">Optional · Physical Check</div></div>
+    <div class="sec-head">
+      <div class="sec-icon p">💪</div>
+      <div>
+        <div class="sec-title a">Basic Fitness Test</div>
+        <div class="sec-sub">3 quick tests — skip if you just want the habit insights</div>
+      </div>
+    </div>
+    <div class="optional-banner">
+      <span class="opt-text">These 3 questions are optional. Your mindset results are ready when you are.</span>
+      <button class="opt-skip" onclick="skipPhysical()">Skip →</button>
+    </div>
+
+    <div id="physical-questions">
+      <div class="q-card pc" id="card-p1">
+        <div class="q-num pn">Optional 01 · Endurance</div>
+        <div class="q-text">How long can you hold a strict forearm plank?</div>
+        <div class="opts grid2">
+          <button class="opt popt" onclick="pick('p1',1,this)"><span class="opt-lbl">0 – 1.5 mins</span><span class="opt-sub">Amateur</span></button>
+          <button class="opt popt" onclick="pick('p1',2,this)"><span class="opt-lbl">1.5 – 3 minutes</span><span class="opt-sub">Beginner</span></button>
+          <button class="opt popt" onclick="pick('p1',2,this)"><span class="opt-lbl">3 – 5 minutes</span><span class="opt-sub">Semi-Pro</span></button>
+          <button class="opt popt" onclick="pick('p1',3,this)"><span class="opt-lbl">5+ minutes</span><span class="opt-sub">Pro</span></button>
+        </div>
+      </div>
+      <div class="q-card pc" id="card-p2">
+        <div class="q-num pn">Optional 02 · Flexibility</div>
+        <div class="q-text">Standing legs straight — how far can you reach down?</div>
+        <div class="opts grid2">
+          <button class="opt popt" onclick="pick('p2',1,this)"><span class="opt-lbl">Can't reach past knees</span><span class="opt-sub">Amateur</span></button>
+          <button class="opt popt" onclick="pick('p2',2,this)"><span class="opt-lbl">Touch shins or ankles</span><span class="opt-sub">Beginner</span></button>
+          <button class="opt popt" onclick="pick('p2',2,this)"><span class="opt-lbl">Touch toes</span><span class="opt-sub">Semi-Pro</span></button>
+          <button class="opt popt" onclick="pick('p2',3,this)"><span class="opt-lbl">Palms flat on floor</span><span class="opt-sub">Pro</span></button>
+        </div>
+      </div>
+      <div class="q-card pc" id="card-p3">
+        <div class="q-num pn">Optional 03 · Balance</div>
+        <div class="q-text">Single-leg stand — arms overhead, heel raised. How long?</div>
+        <div class="opts grid2">
+          <button class="opt popt" onclick="pick('p3',1,this)"><span class="opt-lbl">0 – 10 seconds</span><span class="opt-sub">Amateur</span></button>
+          <button class="opt popt" onclick="pick('p3',2,this)"><span class="opt-lbl">10 – 30 seconds</span><span class="opt-sub">Beginner</span></button>
+          <button class="opt popt" onclick="pick('p3',2,this)"><span class="opt-lbl">30 – 60 seconds</span><span class="opt-sub">Semi-Pro</span></button>
+          <button class="opt popt" onclick="pick('p3',3,this)"><span class="opt-lbl">60+ seconds</span><span class="opt-sub">Pro</span></button>
+        </div>
+      </div>
+    </div>
+
+    <div id="physical-skipped">
+      <p>Physical section skipped — your mindset results are what matter most anyway.</p>
+      <button onclick="undoSkip()">Undo — I want to do it</button>
+    </div>
+
+    <div class="contact-box">
+      <h3>Get your personalised results</h3>
+      <p>We'll build a plan around your real blockers — trainwithoden style.</p>
+      <div class="form-row">
+        <div class="f-field">
+          <label for="f-name">Your Name *</label>
+          <input type="text" id="f-name" placeholder="e.g. Ahmed">
+        </div>
+        <div class="f-field">
+          <label for="f-contact">Phone or Email *</label>
+          <input type="text" id="f-contact" placeholder="0501234567 or email@gmail.com">
+          <div class="err-msg" id="contact-err">Please enter a valid email or phone number</div>
+        </div>
+      </div>
+      <div class="submit-row">
+        <button class="btn-submit" id="submit-btn" onclick="submitQuiz()">Get My Results →</button>
+        <div class="warn-msg" id="warn-msg">Please answer the 5 questions above first</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ════ RESULTS ════ -->
+<div id="results" class="screen">
+  <div class="r-header">
+    <div class="r-brand">trainwithoden · Waseem Method</div>
+    <img src="https://fitness-checker-webpage.vercel.app/logo.png" alt="Lyfstyle Coach" onerror="this.style.display='none'">
+    <p class="r-greeting">Hi <strong id="r-name">there</strong> — here's what your answers reveal</p>
+
+    <div class="graph-wrap">
+      <div class="graph-row">
+        <div class="graph-label">Consistency</div>
+        <div class="graph-bar-wrap"><div class="graph-bar" id="bar-consistency"></div></div>
+        <div class="graph-score" id="score-consistency">–</div>
+      </div>
+      <div class="graph-row">
+        <div class="graph-label">Diet Habits</div>
+        <div class="graph-bar-wrap"><div class="graph-bar" id="bar-diet"></div></div>
+        <div class="graph-score" id="score-diet">–</div>
+      </div>
+      <div class="graph-row">
+        <div class="graph-label">Recovery Mindset</div>
+        <div class="graph-bar-wrap"><div class="graph-bar" id="bar-recovery"></div></div>
+        <div class="graph-score" id="score-recovery">–</div>
+      </div>
+    </div>
+
+    <div class="bridge-text">
+      <p>Read below — maybe it seems simple.</p>
+      <p>But this is exactly how fit people made it.</p>
+    </div>
+  </div>
+
+  <div class="r-body">
+    <div class="r-sec-title">What's holding you back · trainwithoden</div>
+    <div class="suggestion-list" id="suggestion-list"></div>
+
+    <div id="phys-sec" style="display:none">
+      <div class="r-sec-title">Physical Breakdown</div>
+      <div class="cat-cards">
+        <div class="cat-card"><div class="cat-icon">⚡</div><div class="cat-name">Endurance</div><div class="cat-score" id="r-end">–</div><div class="cat-lv" id="r-end-lv">–</div></div>
+        <div class="cat-card"><div class="cat-icon">🧘</div><div class="cat-name">Flexibility</div><div class="cat-score" id="r-flex">–</div><div class="cat-lv" id="r-flex-lv">–</div></div>
+        <div class="cat-card"><div class="cat-icon">⚖️</div><div class="cat-name">Balance</div><div class="cat-score" id="r-bal">–</div><div class="cat-lv" id="r-bal-lv">–</div></div>
+      </div>
+    </div>
+
+    <div class="cta-card">
+      <h3>READY TO FIX THIS?</h3>
+      <p id="cta-text">The Waseem Method is built around your real life — not an ideal version of it. One conversation is all it takes to get started.</p>
+      <div class="cta-btns">
+        <a href="https://wa.me/971562964102" class="cta-a cta-wa" target="_blank">📱 WhatsApp Coach Waseem</a>
+        <a href="mailto:Waseemoden369@gmail.com" class="cta-a cta-mail">✉️ Email for Full Plan</a>
+      </div>
+    </div>
+    <button class="retake-btn" onclick="retake()">↩ Take Assessment Again</button>
+  </div>
+  <div class="footer">© 2025 trainwithoden · Waseem Method · Train Life. Not Just Body.</div>
+</div>
+
+<script>
+const SHEET_URL = 'https://script.google.com/macros/s/AKfycbyDjWUQxg59h5cN1vUATigatoJ7TbSw1efOgUJm5kizec-ZWDCnf9wg8Y4K97DQuepNVw/exec';
+
+const ans = {};
+let physSkipped = false;
+
+// ── Scoring maps ──
+const consistencyScore = { no_time:5, low_energy:4, no_motivation:4, life_stress:5, no_plan:3 };
+const missedScore      = { guilt_nothing:3, compensate:4, accepted:9, didnt_notice:3, modified:9 };
+const dietPatternScore = { eat_well:8, weekday_ok:6, inconsistent:3, know_but_dont:5, no_structure:2 };
+const dietChallengeScore = { cravings:4, social:5, no_time_cook:5, dont_know:4, late_night:3, no_results:5 };
+const recoveryScore    = { bounce_back:9, spiral:2, shame:2, over_exercise:4, continue:7 };
+
+// ── Labels for sheet ──
+const m1Labels = { no_time:'No time', low_energy:'Low energy', no_motivation:'No motivation', life_stress:'Life stress', no_plan:'No plan' };
+const m2Labels = { guilt_nothing:'Guilt, did nothing', compensate:'Compensated extra', accepted:'Accepted it', didnt_notice:"Didn't notice", modified:'Modified plan' };
+const m3Labels = { eat_well:'Eats well', weekday_ok:'Weekday ok', inconsistent:'Inconsistent', know_but_dont:"Knows but doesn't follow", no_structure:'No structure' };
+const m4Labels = { cravings:'Cravings', social:'Social eating', no_time_cook:'No time to cook', dont_know:"Doesn't know what to eat", late_night:'Late night eating', no_results:'Eats well, no results' };
+const m5Labels = { bounce_back:'Bounces back', spiral:'Spirals', shame:'Shame/guilt', over_exercise:'Over-exercises', continue:'Continues normally' };
+
+// ── Suggestion content ──
+const m1Suggestions = {
+  no_time:       { icon:'⏱', label:'Consistency · Time',       text:'<b>Shorten it</b> — 20 min home workouts, 4x a week. No commute, no excuse.' },
+  low_energy:    { icon:'🥗', label:'Consistency · Energy',     text:'<b>Eat before you move</b> — fix sleep and high-nutrition meals first. Energy follows. Then we set the right intensity.' },
+  no_motivation: { icon:'🎯', label:'Consistency · Motivation', text:'<b>Lock in your why</b> — a goal that actually matters to you changes everything. Motivation follows action, not the other way.' },
+  life_stress:   { icon:'⚓', label:'Consistency · Stress',     text:'<b>Build a minimum mode</b> — one thing you always do, no matter how bad the week. That\'s your anchor.' },
+  no_plan:       { icon:'📋', label:'Consistency · Direction',  text:'<b>Get a plan</b> — stop deciding daily, just follow. A structure removes 80% of the mental friction.' }
+};
+
+const m2Suggestions = {
+  guilt_nothing: { icon:'🔁', label:'Missed Sessions',          text:'<b>One reset rule</b> — a 5 min walk signals you\'re back. Guilt without action is just noise.' },
+  compensate:    { icon:'🛡️', label:'Missed Sessions',          text:'<b>Protect tomorrow</b> — don\'t repay yesterday. The goal is the next session, not making up the last one.' },
+  accepted:      { icon:'✅', label:'Missed Sessions',          text:'<b>Keep that mindset</b> — now build a system worthy of it. Consistency is the next unlock.' },
+  didnt_notice:  { icon:'👁️', label:'Missed Sessions',          text:'<b>Track 3 things weekly</b> — sessions, water, sleep. Small data stops the silent drift before it starts.' },
+  modified:      { icon:'🔧', label:'Missed Sessions',          text:'<b>Keep adapting</b> — build a Plan B week so you\'re never choosing between perfection and nothing.' }
+};
+
+const m4Suggestions = {
+  cravings:      { icon:'🧠', label:'Diet · Cravings',          text:'<b>Find the trigger</b> — log your mood before cravings for one week. The pattern will surprise you.' },
+  social:        { icon:'🤝', label:'Diet · Social Eating',     text:'<b>Decide before you arrive</b> — a protocol beats willpower at the table every time.' },
+  no_time_cook:  { icon:'🍱', label:'Diet · Preparation',       text:'<b>One prep session weekly</b> — batch cook + a smart eating-out guide covers 80% of your week without daily cooking.' },
+  dont_know:     { icon:'📖', label:'Diet · Knowledge',         text:'<b>One simple framework</b> — what to eat, when, for your goal. No complexity needed. Fixable in one conversation.' },
+  late_night:    { icon:'🌙', label:'Diet · Late Night',        text:'<b>Fix the daytime gap</b> — late night hunger is usually what you didn\'t eat before 6pm.' },
+  no_results:    { icon:'🔍', label:'Diet · Results',           text:'<b>Audit the numbers</b> — calories and protein accuracy solve this faster than any new diet.' }
+};
+
+const m5Suggestions = {
+  bounce_back:   { icon:'✅', label:'After a Bad Meal',         text:'<b>This is the skill</b> — keep it and build a system around it. Most people never develop this.' },
+  spiral:        { icon:'🔄', label:'After a Bad Meal',         text:'<b>Next meal rule</b> — one bad meal is data, not a verdict. "I\'ve already ruined it" is a feeling, not a fact. Fresh start, always.' },
+  shame:         { icon:'💬', label:'After a Bad Meal',         text:'<b>Shame without a path is just punishment</b> — replace the guilt loop with one rule: next meal resets everything, no conditions.' },
+  over_exercise: { icon:'⚖️', label:'After a Bad Meal',         text:'<b>Food is not debt</b> — exercise to get stronger, never to pay for eating. That cycle leads to burnout fast.' },
+  continue:      { icon:'🧘', label:'After a Bad Meal',         text:'<b>Solid foundation</b> — make the good meals consistent enough that off days barely register.' }
+};
+
+const p1Labels = { 1:'0–1.5 mins', 2:'1.5–5 mins', 3:'5+ mins' };
+const p2Labels = { 1:"Can't reach knees", 2:'Touch shins/ankles', 3:'Palms flat' };
+const p3Labels = { 1:'0–10 sec', 2:'10–60 sec', 3:'60+ sec' };
+
+function go(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function pick(key, val, btn) {
+  const card = document.getElementById('card-' + key);
+  card.querySelectorAll('.opt').forEach(b => b.classList.remove('sel'));
+  btn.classList.add('sel');
+  ans[key] = val;
+  updateProgress();
+}
+
+function updateProgress() {
+  const keys = ['m1','m2','m3','m4','m5'];
+  const answered = keys.filter(k => ans[k]).length;
+  const pct = Math.round((answered / 5) * 100);
+  document.getElementById('prog-text').textContent = answered + ' of 5 answered';
+  document.getElementById('prog-pct').textContent = pct + '%';
+  document.getElementById('prog-fill').style.width = pct + '%';
+}
+
+function skipPhysical() {
+  physSkipped = true;
+  ['p1','p2','p3'].forEach(k => delete ans[k]);
+  document.getElementById('physical-questions').style.display = 'none';
+  document.getElementById('physical-skipped').style.display = 'block';
+}
+
+function undoSkip() {
+  physSkipped = false;
+  document.getElementById('physical-questions').style.display = 'block';
+  document.getElementById('physical-skipped').style.display = 'none';
+}
+
+function validateContact(v) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) || /^[\+]?[\d\s\-]{7,15}$/.test(v.replace(/\s/g,''));
+}
+
+function submitQuiz() {
+  const missing = ['m1','m2','m3','m4','m5'].filter(k => !ans[k]);
+  if (missing.length) {
+    document.getElementById('warn-msg').classList.add('show');
+    document.getElementById('card-' + missing[0]).scrollIntoView({ behavior:'smooth', block:'center' });
+    return;
+  }
+  document.getElementById('warn-msg').classList.remove('show');
+
+  const name = document.getElementById('f-name').value.trim();
+  const contact = document.getElementById('f-contact').value.trim();
+  let valid = true;
+  if (!name) { document.getElementById('f-name').classList.add('err'); valid = false; }
+  else document.getElementById('f-name').classList.remove('err');
+  if (!contact || !validateContact(contact)) {
+    document.getElementById('f-contact').classList.add('err');
+    document.getElementById('contact-err').classList.add('show');
+    valid = false;
+  } else {
+    document.getElementById('f-contact').classList.remove('err');
+    document.getElementById('contact-err').classList.remove('show');
+  }
+  if (!valid) return;
+
+  buildResults(name);
+  logToSheet(name, contact);
+  go('results');
+  window.scrollTo(0, 0);
+}
+
+function calcScores() {
+  const cScore = Math.round((consistencyScore[ans.m1] + missedScore[ans.m2]) / 2);
+  const dScore = Math.round((dietPatternScore[ans.m3] + dietChallengeScore[ans.m4]) / 2);
+  const rScore = Math.round((missedScore[ans.m2] + recoveryScore[ans.m5]) / 2);
+  return { cScore, dScore, rScore };
+}
+
+function barClass(score) {
+  if (score <= 4) return 'bar-red';
+  if (score <= 6) return 'bar-amber';
+  return 'bar-green';
+}
+
+function scoreClass(score) {
+  if (score <= 4) return 'score-red';
+  if (score <= 6) return 'score-amber';
+  return 'score-green';
+}
+
+function setBar(barId, scoreId, score) {
+  const barEl = document.getElementById(barId);
+  const scoreEl = document.getElementById(scoreId);
+  barEl.className = 'graph-bar ' + barClass(score);
+  scoreEl.className = 'graph-score ' + scoreClass(score);
+  scoreEl.textContent = score + '/10';
+  setTimeout(() => { barEl.style.width = (score * 10) + '%'; }, 100);
+}
+
+function lvLabel(s, max) {
+  const p = s / max;
+  if (p <= 0.33) return 'Amateur';
+  if (p <= 0.55) return 'Beginner';
+  if (p <= 0.77) return 'Semi-Pro';
+  return 'Pro';
+}
+
+function buildResults(name) {
+  document.getElementById('r-name').textContent = name;
+
+  const { cScore, dScore, rScore } = calcScores();
+  setBar('bar-consistency', 'score-consistency', cScore);
+  setBar('bar-diet',        'score-diet',        dScore);
+  setBar('bar-recovery',    'score-recovery',    rScore);
+
+  // Suggestions
+  const list = document.getElementById('suggestion-list');
+  list.innerHTML = '';
+  const suggestions = [
+    m1Suggestions[ans.m1],
+    m2Suggestions[ans.m2],
+    m4Suggestions[ans.m4],
+    m5Suggestions[ans.m5]
+  ];
+  suggestions.filter(Boolean).forEach(s => {
+    const d = document.createElement('div');
+    d.className = 'suggestion-row';
+    d.innerHTML = `<div class="s-icon">${s.icon}</div><div class="s-content"><div class="s-label">${s.label}</div><div class="s-text">${s.text}</div></div>`;
+    list.appendChild(d);
+  });
+
+  // Physical
+  const hasPhysical = !physSkipped && ['p1','p2','p3'].every(k => ans[k]);
+  const physSec = document.getElementById('phys-sec');
+  if (hasPhysical) {
+    physSec.style.display = 'block';
+    const p1 = ans['p1'], p2 = ans['p2'], p3 = ans['p3'];
+    document.getElementById('r-end').textContent  = p1 + '/3';
+    document.getElementById('r-end-lv').textContent  = lvLabel(p1, 3);
+    document.getElementById('r-flex').textContent = p2 + '/3';
+    document.getElementById('r-flex-lv').textContent = lvLabel(p2, 3);
+    document.getElementById('r-bal').textContent  = p3 + '/3';
+    document.getElementById('r-bal-lv').textContent  = lvLabel(p3, 3);
+  } else {
+    physSec.style.display = 'none';
+  }
+
+  // CTA text
+  const blockerMap = { no_time:'a time-efficient home program', low_energy:'an energy-first plan', no_motivation:'a goal-driven habit system', life_stress:'a stress-proof routine', no_plan:'a clear structured plan' };
+  document.getElementById('cta-text').textContent = `You need ${blockerMap[ans.m1] || 'a personalised plan'} — built around your real life, not an ideal version of it. One conversation with Coach Waseem is all it takes.`;
+}
+
+function logToSheet(name, contact) {
+  const { cScore, dScore, rScore } = calcScores();
+  const hasPhysical = !physSkipped && ['p1','p2','p3'].every(k => ans[k]);
+
+  let plankVal = 'Skipped';
+  let flexVal = 'Skipped';
+  let balVal = 'Skipped';
+  let physLevel = 'Skipped';
+
+  if (hasPhysical) {
+    plankVal = p1Labels[ans['p1']];
+    flexVal  = p2Labels[ans['p2']];
+    balVal   = p3Labels[ans['p3']];
+    const total = ans['p1'] + ans['p2'] + ans['p3'];
+    const pct = total / 9;
+    if (pct <= 0.33) physLevel = 'AMATEUR';
+    else if (pct <= 0.55) physLevel = 'BEGINNER';
+    else if (pct <= 0.77) physLevel = 'SEMI-PRO';
+    else physLevel = 'PRO';
+  }
+
+  const now = new Date();
+  const timestamp = now.toLocaleDateString('en-GB') + ', ' + now.toLocaleTimeString('en-GB', {hour:'2-digit', minute:'2-digit'});
+
+  const payload = {
+    timestamp,
+    name,
+    contact,
+    consistency: cScore + '/10 (' + m1Labels[ans.m1] + ')',
+    missed:      missedScore[ans.m2] + '/10 (' + m2Labels[ans.m2] + ')',
+    dietpattern: dietPatternScore[ans.m3] + '/10 (' + m3Labels[ans.m3] + ')',
+    diet:        dScore + '/10 (' + m4Labels[ans.m4] + ')',
+    recovery:    rScore + '/10 (' + m5Labels[ans.m5] + ')',
+    plank:       plankVal,
+    flexibility: flexVal,
+    balance:     balVal,
+    physicallevel: physLevel
+  };
+
+  fetch(SHEET_URL, {
+    method: 'POST',
+    mode: 'no-cors',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  }).catch(() => {});
+}
+
+function retake() {
+  Object.keys(ans).forEach(k => delete ans[k]);
+  physSkipped = false;
+  document.querySelectorAll('.opt').forEach(b => b.classList.remove('sel'));
+  document.getElementById('f-name').value = '';
+  document.getElementById('f-contact').value = '';
+  document.getElementById('m1-custom').value = '';
+  document.getElementById('physical-questions').style.display = 'block';
+  document.getElementById('physical-skipped').style.display = 'none';
+  updateProgress();
+  go('quiz');
+  window.scrollTo(0,0);
+}
+</script>
+</body>
+</html>
